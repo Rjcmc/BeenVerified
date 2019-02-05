@@ -15,13 +15,14 @@ type Song struct {
 	Song   string  "json:song"
 	Artist  string  "json:artist"
 	Genre   string  "json:genre"
-	length  int     "json:length"
+	Length  int     "json:length"
 }
 
 func main() {
 	mux := goji.NewMux()
 	mux.HandleFunc(pat.Get("/artist/:artistName"), searchArtist)
 	mux.HandleFunc(pat.Get("/song/:songName"), searchSong)
+	mux.HandleFunc(pat.Get("/genre/:genreName"), searchGenre)
 	mux.Use(logging)
 	http.ListenAndServe("localhost:8000", mux)
 }
@@ -40,13 +41,13 @@ func Connection(w http.ResponseWriter, where string)(error){
     for rows.Next() {
         err = rows.Scan(&artist, &song,&name,&length)
         checkErr(err)
-	b:=Song{
+	newSong:=Song{
 		Artist:    artist,
 		Song:      song,
 		Genre:     name,
-		length:    length,
-		}
-        list=append(list,b)  // append to the list of songs        
+		Length:    length,
+	}
+        list=append(list,newSong)  // append to the list of songs        
     } 
     jsonOut, _ := json.Marshal(list)
     fmt.Fprintf(w, string(jsonOut))
@@ -68,6 +69,13 @@ func searchSong(w http.ResponseWriter, r *http.Request) {
 
 	song := pat.Param(r, "songName")
         Connection(w,"songs.song='"+song+"'")// call the conection to the data base with the where condition for a song search
+
+}
+
+func searchGenre(w http.ResponseWriter, r *http.Request) {
+
+	name := pat.Param(r, "genreName")
+    	Connection(w,"genres.name='"+name+"'")// call the conection to the data base with the where condition for a genre search
 
 }
 
