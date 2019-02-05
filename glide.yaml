@@ -1,0 +1,8 @@
+package: .
+import:
+- package: github.com/mattn/go-sqlite3
+  version: v1.10.0
+- package: goji.io
+  version: v3.0.0
+  subpackages:
+  - pat
