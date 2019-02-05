@@ -1,0 +1,10 @@
+Additional Questions
+	● Are there any suggestions you could make about the structure of our data?
+		I would add 3 more tables: Artist, SongByArtist(a middle table between Artist and songs) and SongByGender(a middle table between 			genres and songs)
+
+		I would delete the artist and the genre on the Songs Table and index them on the new tables so the SongByArtist should have an index 			of the song and the artist also on the SongByGender has to be an index of song and an index the artist
+
+		Also I would put an other name to the length, maybe secondsLength, or something to tell me what is the length about
+		
+	● What fields would you index in these tables?
+		I think the song and the artist should be index, because the people is always looking for those things so it's better if we can access 			to that information faster
