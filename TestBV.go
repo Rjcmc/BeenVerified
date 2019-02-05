@@ -6,14 +6,16 @@ import (
 	"net/http"
 	"goji.io"
 	"goji.io/pat"
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
 	
 )
 
 type Song struct {
-	Song    string  "json:song"
+	Song   string  "json:song"
 	Artist  string  "json:artist"
 	Genre   string  "json:genre"
-	Lenght  int     "json:lenght"
+	length  int     "json:length"
 }
 
 func main() {
@@ -23,16 +25,43 @@ func main() {
 	http.ListenAndServe("localhost:8000", mux)
 }
 
+func Connection(w http.ResponseWriter, where string)(error){
+    db, err := sql.Open("sqlite3", "./jrdd.db")
+    checkErr(err)
+    rows, err := db.Query("SELECT songs.artist,songs.song,genres.name,songs.length FROM genres inner join songs on genres.id=songs.genre where "+where )
+    checkErr(err)
+    var artist string
+    var song   string
+    var name   string
+    var length int
+    list:= []Song{}
+	
+    for rows.Next() {
+        err = rows.Scan(&artist, &song,&name,&length)
+        checkErr(err)
+	fmt.Println(artist)
+        fmt.Println(song)
+        fmt.Println(length)  
+		b:=Song{
+			Artist:    artist,
+			Song:      song,
+			Genre:     name,
+			length:    length,
+			}
+        list=append(list,b)  // append to the list of songs        
+    } 
+    jsonOut, _ := json.Marshal(list)
+    fmt.Fprintf(w, string(jsonOut))
+    rows.Close() 
+    db.Close()
+    return err
+
+}
 
 func searchArtist(w http.ResponseWriter, r *http.Request) {
 
-	jsonOut, _ := json.Marshal(Song{
-				Song : "sweet child of mine",
-				Artist : "guns and roses",
-				Genre : "rock",
-				Lenght : 503,
-			})
-    	fmt.Fprintf(w, string(jsonOut))
+	artistName := pat.Param(r, "artistName")
+	Connection(w ,"songs.artist='"+artistName+"'" )// call the conection to the data base with the where condition
 
     
 }
