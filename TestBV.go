@@ -23,9 +23,11 @@ func main() {
 	mux.HandleFunc(pat.Get("/artist/:artistName"), searchArtist)
 	mux.HandleFunc(pat.Get("/song/:songName"), searchSong)
 	mux.HandleFunc(pat.Get("/genre/:genreName"), searchGenre)
+	mux.HandleFunc(pat.Get("/length/:min/:max"), searchLength)
 	mux.Use(logging)
 	http.ListenAndServe("localhost:8000", mux)
 }
+
 
 func Connection(w http.ResponseWriter, where string)(error){
     db, err := sql.Open("sqlite3", "./jrdd.db")
@@ -77,6 +79,14 @@ func searchGenre(w http.ResponseWriter, r *http.Request) {
 	name := pat.Param(r, "genreName")
     	Connection(w,"genres.name='"+name+"'")// call the conection to the data base with the where condition for a genre search
 
+}
+
+func searchLength(w http.ResponseWriter, r *http.Request) {
+
+	min := pat.Param(r, "min")
+	max := pat.Param(r, "max")
+	Connection(w,"songs.length>="+min+" and songs.length<="+max)// call the conection to the data base with the where condition for a Length search
+    
 }
 
 func logging(h http.Handler) http.Handler {
