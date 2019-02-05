@@ -1,7 +1,7 @@
 package main
 
 import (
-	
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"goji.io"
@@ -9,6 +9,12 @@ import (
 	
 )
 
+type Song struct {
+	Song    string  "json:song"
+	Artist  string  "json:artist"
+	Genre   string  "json:genre"
+	Lenght  int     "json:lenght"
+}
 
 func main() {
 	mux := goji.NewMux()
@@ -20,8 +26,13 @@ func main() {
 
 func searchArtist(w http.ResponseWriter, r *http.Request) {
 
-	artistName := pat.Param(r, "artistName")
-	w.Write([]byte(fmt.Sprintf("Hello %s!",artistName)))
+	jsonOut, _ := json.Marshal(Song{
+				Song : "sweet child of mine",
+				Artist : "guns and roses",
+				Genre : "rock",
+				Lenght : 503,
+			})
+    	fmt.Fprintf(w, string(jsonOut))
 
     
 }
