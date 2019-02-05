@@ -20,9 +20,9 @@ type Song struct {
 
 type genreOrder struct {
 	
-	Count   int     "json:count"
-	Genre   string  "json:genre"
-	Length  int     "json:length"
+	NumberSong      int     "json:numberSong"
+	Genre   	string  "json:genre"
+	Length  	int     "json:length"
 }
 
 func main() {
@@ -106,9 +106,9 @@ func orderLength(w http.ResponseWriter, r *http.Request) {
         checkErr(err)
         newGenre:=genreOrder{
 			
-			Count:      count,
-			Genre:     genre,
-			Length:    length,
+			NumberSong:      count,
+			Genre:     	genre,
+			Length:    	length,
 			}
         list=append(list,newGenre)    
     }
